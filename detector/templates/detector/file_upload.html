@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Scan | AI Scam Shield</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+</head>
+<body class="app-page detector-page">
+    <nav class="auth-topbar">
+        <div class="auth-nav">
+            <a class="auth-brand" href="{% url 'dashboard' %}">AI Scam Shield</a>
+            {% include 'detector/auth_nav.html' %}
+        </div>
+    </nav>
+    <main class="auth-main detector-main">
+        <header class="page-heading detector-heading">
+            <div>
+                <p class="eyebrow">FILE ANALYSIS</p>
+                <h1>File scan</h1>
+                <p class="auth-subtitle">Upload a text file, email, PDF, or image to identify suspicious content in messages, screenshots, or documents.</p>
+            </div>
+        </header>
+        <section class="detector-panel">
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="flash {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <form class="detector-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="drop-zone" id="drop-zone">
+                    <input type="file" name="file" id="file-input" accept=".txt,.eml,.pdf,.png,.jpg,.jpeg,.webp" required />
+                    <div class="drop-zone-inner">
+                        <strong>Choose a file</strong>
+                        <span>or drag and drop it here</span>
+                    </div>
+                </div>
+                <div class="file-meta">
+                    <span>Supported formats: .txt, .eml, .pdf, .png, .jpg, .jpeg, .webp</span>
+                    <span>Maximum file size: 10 MB</span>
+                </div>
+                <div class="form-actions">
+                    <button class="primary-btn" type="submit">Scan File</button>
+                    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+                </div>
+            </form>
+
+            {% if result %}
+                <div class="result-box">
+                    <div class="row">
+                        <span class="badge {% if result.is_scam %}scam{% else %}safe{% endif %}">{{ result.prediction_label }}</span>
+                        <span>Risk Level: {{ result.risk_level }}</span>
+                    </div>
+                    <div class="analysis-grid">
+                        <div class="detail-box"><strong>Prediction</strong><div>{{ result.prediction_name }}</div></div>
+                        <div class="detail-box"><strong>Risk Score</strong><div>{{ result.risk_score }}</div></div>
+                        <div class="detail-box"><strong>Detected Content Type</strong><div>{{ result.content_type }}</div></div>
+                        <div class="detail-box"><strong>Text Extraction</strong><div>{{ result.extraction_status }}</div></div>
+                        <div class="detail-box"><strong>OCR</strong><div>{{ result.ocr_status }}</div></div>
+                        <div class="detail-box"><strong>File</strong><div>{{ result.file_name }}</div></div>
+                        {% if result.detected_at %}<div class="detail-box"><strong>Detected At</strong><div>{{ result.detected_at }}</div></div>{% endif %}
+                        {% if result.sender %}<div class="detail-box"><strong>Sender</strong><div>{{ result.sender }}</div></div>{% endif %}
+                        {% if result.subject %}<div class="detail-box"><strong>Subject</strong><div>{{ result.subject }}</div></div>{% endif %}
+                    </div>
+
+                    {% if result.warnings %}
+                        <div class="warning-box">
+                            <strong>Warnings</strong>
+                            <ul>
+                                {% for warning in result.warnings %}
+                                    <li>{{ warning }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    {% if result.detected_indicators %}
+                        <div class="keyword-list">
+                            {% for signal in result.detected_indicators %}
+                                <span class="pill">{{ signal }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if result.suspicious_urls %}
+                        <div class="detail-box file-url-box">
+                            <strong>Suspicious URLs</strong>
+                            {% for url in result.suspicious_urls %}
+                                <div class="url-text">{{ url }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if result.entered_text %}
+                        <div class="preview-block">
+                            <strong>Extracted text preview</strong>
+                            <p>{{ result.entered_text|truncatechars:1200 }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        if (dropZone && fileInput) {
+            ['dragenter', 'dragover'].forEach((eventName) => {
+                dropZone.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    dropZone.classList.add('is-dragging');
+                });
+            });
+            ['dragleave', 'drop'].forEach((eventName) => {
+                dropZone.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    dropZone.classList.remove('is-dragging');
+                });
+            });
+            dropZone.addEventListener('drop', (event) => {
+                const droppedFiles = event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files : [];
+                if (droppedFiles.length > 0) {
+                    fileInput.files = droppedFiles;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

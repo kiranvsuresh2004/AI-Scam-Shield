@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Scam Shield</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+</head>
+<body class="app-home">
+    <nav class="auth-topbar">
+        <div class="auth-nav">
+            <a class="auth-brand" href="{% url 'home' %}">AI Scam Shield</a>
+            {% include 'detector/auth_nav.html' %}
+        </div>
+    </nav>
+
+    <main class="home-main">
+        <section class="hero">
+            <div class="eyebrow">AI-powered scam defense</div>
+            <h1>Protect users from <span>SMS, Email, and URL scams</span></h1>
+            <p>AI Scam Shield uses machine learning models to detect suspicious content and helps users review their own detection history in a secure dashboard.</p>
+        </section>
+
+        <section class="feature-grid">
+            <article class="feature-card">
+                <div class="icon-wrap">📱</div>
+                <h3>SMS Detection</h3>
+                <p>Identify scam and promotional messages before users click or trust a link.</p>
+                <a href="{% url 'sms' %}">Analyze SMS</a>
+            </article>
+            <article class="feature-card">
+                <div class="icon-wrap">✉️</div>
+                <h3>Email Detection</h3>
+                <p>Check email content with contextual risk signals to prevent phishing and credential theft.</p>
+                <a href="{% url 'email' %}">Analyze Email</a>
+            </article>
+            <article class="feature-card">
+                <div class="icon-wrap">🔗</div>
+                <h3>URL Detection</h3>
+                <p>Inspect suspicious domains, redirects and malicious patterns in URLs.</p>
+                <a href="{% url 'url' %}">Analyze URL</a>
+            </article>
+        </section>
+
+    </main>
+</body>
+</html>

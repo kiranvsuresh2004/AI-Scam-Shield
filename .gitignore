@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Large datasets
+dataset/phishing_email.csv
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables
+.env
+

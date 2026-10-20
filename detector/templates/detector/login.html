@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | AI Scam Shield</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+</head>
+<body class="auth-page">
+    <nav class="auth-topbar"><div class="auth-nav">
+        <a class="auth-brand" href="{% url 'home' %}">AI Scam Shield</a>
+        {% include 'detector/auth_nav.html' %}
+    </div></nav>
+    <main class="auth-main auth-narrow">
+        <section class="auth-panel">
+            <p class="eyebrow">WELCOME BACK</p>
+            <h1>Log in</h1>
+            <p class="auth-subtitle">Continue to your Scam Shield dashboard.</p>
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for message in messages %}
+                        <p class="flash {{ message.tags }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form class="auth-form" method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+                <label>Username or email<input type="text" name="identity" autocomplete="username" required /></label>
+                <label>Password<input type="password" name="password" autocomplete="current-password" required /></label>
+                <button class="auth-button" type="submit">Log in</button>
+            </form>
+            <p class="auth-footnote">New to Scam Shield? <a href="{% url 'register' %}">Create an account</a></p>
+        </section>
+    </main>
+</body>
+</html>

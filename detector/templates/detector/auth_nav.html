@@ -1,0 +1,19 @@
+{% if request.user.is_authenticated %}
+    <div class="account-nav">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'sms_detection' %}">SMS Detection</a>
+        <a href="{% url 'email_detection' %}">Email Detection</a>
+        <a href="{% url 'url_detection' %}">URL Detection</a>
+        <a href="{% url 'file_scan' %}">File Scan</a>
+        <a href="{% url 'history' %}">History</a>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+{% else %}
+    <div class="account-nav">
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}">Register</a>
+    </div>
+{% endif %}

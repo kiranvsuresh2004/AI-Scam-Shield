@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>History | AI Scam Shield</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+</head>
+<body>
+    <nav class="auth-topbar"><div class="auth-nav">
+        <a class="auth-brand" href="{% url 'dashboard' %}">AI Scam Shield</a>
+        {% include 'detector/auth_nav.html' %}
+    </div></nav>
+    <main class="auth-main history-main">
+        <section class="history-panel">
+            <header class="page-heading history-heading">
+                <div><p class="eyebrow">YOUR ACTIVITY</p><h1>Detection history</h1></div>
+                <div class="actions">
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <form method="post" action="{% url 'clear_history' %}">
+                    {% csrf_token %}
+                    <button class="secondary-btn" type="submit">Clear History</button>
+                </form>
+                </div>
+            </header>
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="flash {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+            {% if history_records %}
+                <div class="history-table-wrap"><table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Detection Type</th>
+                            <th>Input</th>
+                            <th>Prediction</th>
+                            <th>Risk Score</th>
+                            <th>Risk Signals</th>
+                            <th>Date / Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in history_records %}
+                            <tr>
+                                <td>{{ record.detection_type|upper }}</td>
+                                <td>{{ record.input_text|truncatechars:80 }}</td>
+                                <td><span class="result-chip {% if record.prediction == 'Genuine' %}safe{% else %}danger{% endif %}">{{ record.prediction }}</span></td>
+                                <td>{{ record.risk_score }}</td>
+                                <td>
+                                    {% if record.risk_signals %}
+                                        {{ record.risk_signals|join:', ' }}
+                                    {% else %}
+                                        None
+                                    {% endif %}
+                                </td>
+                                <td>{{ record.formatted_date }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'delete_history' record.id %}">
+                                        {% csrf_token %}
+                                        <button class="danger-btn" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table></div>
+            {% else %}
+                <div class="empty-state"><p>No detection records yet. Your completed checks will appear here.</p></div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

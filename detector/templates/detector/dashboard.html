@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | AI Scam Shield</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+</head>
+<body class="auth-page">
+    <nav class="auth-topbar"><div class="auth-nav">
+        <a class="auth-brand" href="{% url 'dashboard' %}">AI Scam Shield</a>
+        {% include 'detector/auth_nav.html' %}
+    </div></nav>
+    <main class="auth-main">
+        <header class="page-heading">
+            <div><p class="eyebrow">YOUR WORKSPACE</p><h1>Welcome, {{ username }}</h1></div>
+            <a class="text-link" href="{% url 'history' %}">View detection history</a>
+        </header>
+        {% if messages %}
+            <div class="flash-stack">
+                {% for message in messages %}
+                    <p class="flash {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <section class="stats-grid" aria-label="Detection statistics">
+            <article class="stat-item"><span>Total checks</span><strong>{{ stats.total_checks|default:0 }}</strong></article>
+            <article class="stat-item"><span>SMS checks</span><strong>{{ stats.sms_checks|default:0 }}</strong></article>
+            <article class="stat-item"><span>Email checks</span><strong>{{ stats.email_checks|default:0 }}</strong></article>
+            <article class="stat-item"><span>URL checks</span><strong>{{ stats.url_checks|default:0 }}</strong></article>
+            <article class="stat-item"><span>File scans</span><strong>{{ stats.file_checks|default:0 }}</strong></article>
+            <article class="stat-item"><span>Spam / phishing</span><strong>{{ stats.spam_checks|default:0 }}</strong></article>
+            <article class="stat-item"><span>Genuine</span><strong>{{ stats.genuine_checks|default:0 }}</strong></article>
+        </section>
+        <section class="workspace-section">
+            <div class="section-heading"><div><p class="eyebrow">SCAM DETECTION</p><h2>Choose a detector</h2></div></div>
+            <div class="detector-grid">
+                <a class="detector-link" href="{% url 'sms_detection' %}"><span>01</span><strong>SMS Detection</strong><small>Analyze a text message</small></a>
+                <a class="detector-link" href="{% url 'email_detection' %}"><span>02</span><strong>Email Detection</strong><small>Check for phishing</small></a>
+                <a class="detector-link" href="{% url 'url_detection' %}"><span>03</span><strong>URL Detection</strong><small>Inspect a suspicious link</small></a>
+                <a class="detector-link" href="{% url 'file_scan' %}"><span>04</span><strong>File Scan</strong><small>Analyze uploaded files</small></a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

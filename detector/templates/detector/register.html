@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | AI Scam Shield</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+</head>
+<body class="auth-page">
+    <nav class="auth-topbar"><div class="auth-nav">
+        <a class="auth-brand" href="{% url 'home' %}">AI Scam Shield</a>
+        {% include 'detector/auth_nav.html' %}
+    </div></nav>
+    <main class="auth-main auth-narrow">
+        <section class="auth-panel">
+            <p class="eyebrow">GET STARTED</p>
+            <h1>Create your account</h1>
+            <p class="auth-subtitle">Save detection results and revisit them any time.</p>
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for message in messages %}
+                        <p class="flash {{ message.tags }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form class="auth-form" method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+                <label>Username<input type="text" name="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9_]+" autocomplete="username" required /></label>
+                <label>Email<input type="email" name="email" maxlength="254" autocomplete="email" required /></label>
+                <label>Password<input type="password" name="password" minlength="8" maxlength="128" autocomplete="new-password" required /></label>
+                <label>Confirm password<input type="password" name="confirm_password" minlength="8" maxlength="128" autocomplete="new-password" required /></label>
+                <button class="auth-button" type="submit">Create account</button>
+            </form>
+            <p class="auth-footnote">Already registered? <a href="{% url 'login' %}">Log in</a></p>
+        </section>
+    </main>
+</body>
+</html>

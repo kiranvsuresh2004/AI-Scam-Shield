@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMS Detection | AI Scam Shield</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+</head>
+<body class="app-page detector-page">
+    <nav class="auth-topbar">
+        <div class="auth-nav">
+            <a class="auth-brand" href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">AI Scam Shield</a>
+            {% include 'detector/auth_nav.html' %}
+        </div>
+    </nav>
+    <main class="auth-main detector-main">
+        <header class="page-heading detector-heading">
+            <div><p class="eyebrow">MESSAGE ANALYSIS</p><h1>SMS detection</h1><p class="auth-subtitle">Check a message for spam and scam indicators.</p></div>
+        </header>
+        <section class="detector-panel">
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="flash">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+            <form class="detector-form" method="post">
+                {% csrf_token %}
+                <textarea class="detector-input" name="text" aria-label="SMS text to analyze" placeholder="Paste the message here...">{{ result.entered_text|default:text|default:'' }}</textarea>
+                <div class="form-actions">
+                    <button class="primary-btn" type="submit">Analyze SMS</button>
+                    <a href="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}">Dashboard</a>
+                </div>
+            </form>
+            {% if result %}
+                <div class="result-box">
+                    <div class="row">
+                        <span class="badge {% if result.is_scam %}scam{% else %}safe{% endif %}">{{ result.prediction_label }}</span>
+                        <span>Risk Level: {{ result.risk_level }}</span>
+                    </div>
+                    <div class="analysis-grid">
+                        <div class="detail-box"><strong>Prediction</strong><div>{{ result.prediction_name }}</div></div>
+                        <div class="detail-box"><strong>Risk Score</strong><div>{{ result.risk_score }}</div></div>
+                        <div class="detail-box"><strong>Confidence</strong><div>{{ result.confidence }}%</div></div>
+                        <div class="detail-box"><strong>Entered text</strong><div>{{ result.entered_text|truncatechars:120 }}</div></div>
+                    </div>
+                    <div class="keyword-list">
+                        {% if result.detected_indicators %}
+                            {% for signal in result.detected_indicators %}
+                                <span class="pill">{{ signal }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="pill">No obvious risk signals detected</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
